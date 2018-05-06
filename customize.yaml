@@ -1,0 +1,9 @@
+  sensor.time:
+    hidden: true
+  sensor.alarm_clock_time:
+    friendly_name: 'Scheduled today'
+    icon: mdi:timer
+  input_number.sprinkle_length:
+    icon: mdi:ray-start-end
+  input_number.weather_score:
+    icon: mdi:calculator

@@ -1,0 +1,17 @@
+
+# Sprinkler system
+   sprinkler_system:
+      name: Sprinkler system
+      entities:
+         - input_boolean.sprinkle_on
+         - input_number.sprinkle_time
+         - input_number.sprinkle_min
+         - input_number.sprinkle_max
+         - sensor.alarm_clock_time
+
+# Data card
+   data_collection:
+      name: Datas
+      entities:
+         - input_number.sprinkle_length
+         - input_number.weather_score

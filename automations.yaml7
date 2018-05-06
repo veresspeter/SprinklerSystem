@@ -1,0 +1,57 @@
+
+- alias: Sprinkle scheduler
+  trigger:
+    - entity_id: input_number.sprinkle_max, input_number.sprinkle_min, input_number.sprinkle_time
+      platform: state
+    - platform: time
+      seconds: 0
+    - platform: homeassistant
+      event: start
+  action:
+    - service: weather_info.update
+      data_template:
+        min: '{{ states.input_number.sprinkle_min.state | int }}'
+        max: '{{ states.input_number.sprinkle_max.state | int }}'
+
+- alias: Automatic sprinkler activation
+  trigger:
+    - platform: time
+      seconds: 0
+  condition:
+    condition: and
+    conditions:
+      - condition: template
+        value_template: '{{ now().hour == states.input_number.sprinkle_time.state|int }}'
+      - condition: template
+        value_template: '{{ now().minutes == 0 }}'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.sprinkle_on
+
+- alias: Automatic sprinkler deactivation
+  trigger:
+    - platform: time
+      seconds: 0
+  condition:
+    condition: and
+    conditions:
+      - condition: template
+        value_template: '{{ now().hour == states.input_number.sprinkle_time.state|int }}'
+      - condition: template
+        value_template: '{{ now().minute == states.input_number.sprinkle_length.state|int }}'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.sprinkle_on
+
+- alias: Sprinkle is on notification
+  trigger:
+    - platform: time
+      seconds: 0
+  condition:
+    - condition: state
+      entity_id: input_boolean.sprinkle_on
+      state: 'on'
+  action:
+    - platform: mqtt
+      topic: homeassistant/sprinkle_system
+      payload: 'on'

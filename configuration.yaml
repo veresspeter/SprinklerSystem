@@ -1,0 +1,139 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 47.1
+  longitude: 20.15
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 84
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Budapest
+  # Customization file
+  customize: !include customize.yaml
+
+# Show links to resources in log and frontend
+# introduction:
+
+# Enables the frontend
+frontend:
+
+# Enables configuration UI
+config:
+
+http:
+  # Secrets are defined in the file secrets.yaml
+  # api_password: !secret http_password
+  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+  # base_url: example.duckdns.org:8123
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+# Track the sun
+# sun:
+
+# Weather prediction
+# sensor:
+#   - platform: yr
+
+# Text to speech
+tts:
+  - platform: google
+
+# Cloud
+# cloud:
+
+###############################################
+
+#Custom
+
+mqtt:
+  broker: test.mosquitto.org
+
+input_boolean:
+  sprinkle_on:
+    name: Sprinkle
+    icon: mdi:water
+
+input_number:
+  sprinkle_min:
+    name: Min duration
+    min: 0
+    max: 59
+    step: 5
+    unit_of_measurement: min
+    icon: mdi:ray-start
+  sprinkle_max:
+    name: Max duration
+    min: 0
+    max: 59
+    step: 5
+    unit_of_measurement: min
+    icon: mdi:ray-end
+  sprinkle_time:
+    name: Timing
+    min: 0
+    max: 23
+    step: 1
+    unit_of_measurement: ': 00'
+    icon: mdi:clock
+  sprinkle_length:
+    name: Sprinkle length
+    min: 0
+    max: 60
+  weather_score:
+    name: Weather score
+    min: -50
+    max: 150
+
+weather_info:
+
+sensor:
+  - platform: time_date
+    display_options:
+      - 'time'
+  - platform: template
+    sensors:
+      alarm_clock_time:
+        value_template: >-
+          {%- if states.input_number.sprinkle_length.state|int == 0 -%}
+            -
+          {%- else -%}
+            {{ states.input_number.sprinkle_time.state|int }}:00-
+            {{ states.input_number.sprinkle_time.state|int }}:
+            {%- if states.input_number.sprinkle_length.state|int < 10 -%}
+              0
+            {%- endif -%}
+              {{ states.input_number.sprinkle_length.state|int }}
+          {%- endif -%}
+#   - platform: weather_info
+            
+###############################################
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+
