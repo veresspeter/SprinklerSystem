@@ -56,3 +56,26 @@
       data_template:
         topic: homeassistant/garden/sprinkle_system
         payload: 'on'
+
+- alias: Sprinkler on status notification
+  trigger:
+    - platform: state
+      entity_id: input_boolean.sprinkle_on
+      to: 'on'
+  action:
+    - service: mqtt.publish
+      data_template:
+        topic: homeassistant/garden/sprinkle_system
+        payload: 'on'
+
+- alias: Sprinkler off status notification
+  trigger:
+    - platform: state
+      entity_id: input_boolean.sprinkle_on
+      to: 'off'
+  action:
+    - service: mqtt.publish
+      data_template:
+        topic: homeassistant/garden/sprinkle_system
+        payload: 'off'
+
