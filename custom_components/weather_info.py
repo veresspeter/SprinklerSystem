@@ -41,8 +41,8 @@ def setup(hass, config):
           max = int(call.data.get('max', 0))
 
           print('Weather update in process ...')
-          print('Sprinkle length min: ' + str(min))
-          print('Sprinkle length max: ' +  str(max))
+          print('Sprinkle length min: ' + str(min) + ' min')
+          print('Sprinkle length max: ' +  str(max) + ' min')
 
           forecaster = owm.three_hours_forecast_at_coords(47.5, 19.1)
           forecast = forecaster.get_forecast()
@@ -65,14 +65,14 @@ def setup(hass, config):
           temp /= count
           humi /= count
           cloud /= count
-          rain /= count
+          rain *= 10 / count
 
-          print('Weather avg temperature: ' + str(temp))
-          print('Weather avg humidity: ' + str(humi))
-          print('Weather avg cloud coverage: ' + str(cloud))
-          print('Weather avg rain amount: ' + str(rain))
+          print('Weather avg temperature: ' + str(temp) + ' °C')
+          print('Weather avg humidity: ' + str(humi) + ' %')
+          print('Weather avg cloud coverage: ' + str(cloud) + ' %')
+          print('Weather avg rain amount: ' + str(rain) + ' mm')
 
-          score = int( (temp - 15) * 7.5 + ( humi - 50 ) * -0.5 + ( rain - 0.3 ) * -1.2 + ( cloud - 50 ) * -0.25 )
+          score = int( (temp-15)*7.5 + (humi-50)*-0.25 + rain*-60 + (cloud-50)*-0.25 )
 
           print('Weather score: ' + str(score) )
           hass.services.call('input_number','set_value', { "entity_id":"input_number.weather_score", "value":int(score) })
